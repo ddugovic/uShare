@@ -98,7 +98,8 @@ struct ushare_t {
   struct upnp_entry_t *root_entry;
   int nr_entries;
   int starting_id;
-  int init;
+  bool init;
+  bool term;
   UpnpDevice_Handle dev;
   char *udn;
   char *ip;

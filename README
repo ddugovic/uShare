@@ -1,9 +1,3 @@
-Build Deps
-==========
-sudo apt-get source ushare
-sudo apt-get build-dep ushare
-
-
 GeeXboX uShare - Introduction
 =============================
 
@@ -87,6 +81,12 @@ The following DLNA library is required for proper DLNA support :
    The libdlna library is used to provides DLNA profiles informations.
    libdlna can be downloaded from http://libdlna.geexbox.org/.
 
+Building Dependencies
+=====================
+
+sudo apt-get source ushare
+sudo apt-get build-dep ushare
+
 Building and Installation
 =========================
 
@@ -97,17 +97,15 @@ used right away. No extra files need to be installed.
 You can pass the CFLAGS you want to configure including -DDEBUG in order
 to activate support for debug messages in uShare.
 
-Example :
-
+Example:
 CFLAGS="-Os" ./configure --prefix=/usr
 make
 
-You can enable DLNA support by doing a:
+You can enable DLNA support by doing:
 ./configure --enable-dlna
 
-If you want to install uShare on your system, run :
-
-make install-strip
+If you want to install uShare on your system, run:
+make install
 
 This will copy the executable and manual page into their appropriate
 directories (/usr/bin and /usr/man/man1 in this example).

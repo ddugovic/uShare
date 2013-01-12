@@ -93,7 +93,8 @@ ushare_new (void)
   ut->root_entry = NULL;
   ut->nr_entries = 0;
   ut->starting_id = STARTING_ENTRY_ID_DEFAULT;
-  ut->init = 0;
+  ut->init = false;
+  ut->term = false;
   ut->dev = 0;
   ut->udn = NULL;
   ut->ip = NULL;
@@ -169,6 +170,7 @@ ushare_signal_exit (void)
   pthread_mutex_lock (&ut->termination_mutex);
   pthread_cond_signal (&ut->termination_cond);
   pthread_mutex_unlock (&ut->termination_mutex);
+  ut->term = true;
 }
 
 static void
@@ -865,12 +867,8 @@ main (int argc, char **argv)
     return EXIT_FAILURE;
   }
   
-  /* Let main sleep until it's time to die... */
-  // pthread_mutex_lock (&ut->termination_mutex);
-  // pthread_cond_wait (&ut->termination_cond, &ut->termination_mutex);
-  // pthread_mutex_unlock (&ut->termination_mutex);
-  
-  while (true) {
+  /* Rescans library every 30 seconds until ready to terminate. */
+  while (!ut->term) {
     log_info (_("Rescanning...\n"));
     free_metadata_list(ut);
     build_metadata_list(ut);
@@ -883,7 +881,5 @@ main (int argc, char **argv)
   free_metadata_list (ut);
   ushare_free (ut);
   finish_iconv ();
-
-  /* it should never be executed */
   return EXIT_SUCCESS;
 }

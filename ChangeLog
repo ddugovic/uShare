@@ -1,3 +1,8 @@
+2013-01-12  Daniel Dugovic <ddugovic@github.com>
+
+	* minor fix for Jason Madigan's change to rescan libraries.
+	* tidied README file.
+
 2007-12-09  Benjamin Zores <ben@geexbox.org>
 
 	* new public release (Version 1.1a).
