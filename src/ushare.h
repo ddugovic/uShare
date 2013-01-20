@@ -90,6 +90,8 @@
 "</root>"
 
 struct ushare_t {
+  int argc;
+  char **argv;
   char *name;
   char *interface;
   char *model_name;

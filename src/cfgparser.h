@@ -45,7 +45,7 @@
 
 int parse_config_file (struct ushare_t *ut)
     __attribute__ ((nonnull));
-int parse_command_line (struct ushare_t *ut, int argc, char **argv)
+int parse_command_line (struct ushare_t *ut)
     __attribute__ ((nonnull (1)));
 
 typedef struct {

@@ -75,16 +75,18 @@
 
 struct ushare_t *ut = NULL;
 
-static struct ushare_t * ushare_new (void)
+static struct ushare_t * ushare_new (int argc, char **argv)
     __attribute__ ((malloc));
 
 static struct ushare_t *
-ushare_new (void)
+ushare_new (int argc, char **argv)
 {
   struct ushare_t *ut = (struct ushare_t *) malloc (sizeof (struct ushare_t));
   if (!ut)
     return NULL;
 
+  ut->argc = argc;
+  ut->argv = argv;
   ut->name = strdup (DEFAULT_USHARE_NAME);
   ut->interface = strdup (DEFAULT_USHARE_IFACE);
   ut->model_name = strdup (DEFAULT_USHARE_NAME);
@@ -656,12 +658,28 @@ reload_config (int s __attribute__ ((unused)))
 
   log_info (_("Reloading configuration...\n"));
 
-  ut2 = ushare_new ();
+  ut2 = ushare_new (ut->argc, ut->argv);
   if (!ut || !ut2)
     return;
 
-  if (parse_config_file (ut2) < 0)
+  /* Parse args before cfg file, as we may override the default file */
+  if (parse_command_line (ut2) < 0 || parse_config_file (ut2) < 0) {
+    ushare_free (ut2);
     return;
+  }
+
+  if (ut2->xbox360)
+  {
+    char *name;
+
+    name = malloc (strlen (XBOX_MODEL_NAME) + strlen (ut2->model_name) + 4);
+    sprintf (name, "%s (%s)", XBOX_MODEL_NAME, ut2->model_name);
+    free (ut2->model_name);
+    ut2->model_name = strdup (name);
+    free (name);
+
+    ut2->starting_id = STARTING_ENTRY_ID_XBOX360;
+  }
 
   if (ut->name && strcmp (ut->name, ut2->name))
   {
@@ -761,15 +779,15 @@ ushare_kill (ctrl_telnet_client *client,
 int
 main (int argc, char **argv)
 {
-  ut = ushare_new ();
-  if (!ut)
-    return EXIT_FAILURE;
-
   setup_i18n ();
   setup_iconv ();
 
+  ut = ushare_new (argc, argv);
+  if (!ut)
+    return EXIT_FAILURE;
+
   /* Parse args before cfg file, as we may override the default file */
-  if (parse_command_line (ut, argc, argv) < 0)
+  if (parse_command_line (ut) < 0)
   {
     ushare_free (ut);
     return EXIT_SUCCESS;
@@ -780,6 +798,12 @@ main (int argc, char **argv)
     /* fprintf here, because syslog not yet ready */
     fprintf (stderr, _("Warning: can't parse file \"%s\".\n"),
              ut->cfg_file ? ut->cfg_file : SYSCONFDIR "/" USHARE_CONFIG_FILE);
+  }
+
+  if (ut->daemon)
+  {
+    /* starting syslog feature as soon as possible */
+    start_log ();
   }
 
   if (ut->xbox360)
@@ -793,12 +817,6 @@ main (int argc, char **argv)
     free (name);
 
     ut->starting_id = STARTING_ENTRY_ID_XBOX360;
-  }
-
-  if (ut->daemon)
-  {
-    /* starting syslog feature as soon as possible */
-    start_log ();
   }
 
   if (!ut->contentlist)
@@ -868,11 +886,10 @@ main (int argc, char **argv)
   }
   
   /* Rescans library every 30 seconds until ready to terminate. */
-  while (!ut->term) {
-    log_info (_("Rescanning...\n"));
-    free_metadata_list(ut);
-    build_metadata_list(ut);
-    sleep(30);
+  build_metadata_list(ut);
+  while (!ut->term && !sleep(30)) {
+    free_metadata_list (ut);
+    build_metadata_list (ut);
   }
 
   if (ut->use_telnet)

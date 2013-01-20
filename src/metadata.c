@@ -289,7 +289,7 @@ upnp_entry_new (struct ushare_t *ut, const char *name, const char *fullpath,
   entry->fd = -1;
 
   if (entry->id && entry->url)
-    log_verbose ("Entry->URL (%d): %s\n", entry->id, entry->url);
+    log_verbose ("[%d] %s\n", entry->id, entry->title);
 
   return entry;
 }
@@ -458,6 +458,7 @@ metadata_add_container (struct ushare_t *ut,
   if (!entry || !container)
     return;
 
+  log_verbose ("Scanning directory %s\n", container);
   n = scandir (container, &namelist, 0, alphasort);
   if (n < 0)
   {
@@ -479,8 +480,7 @@ metadata_add_container (struct ushare_t *ut,
     fullpath = (char *)
       malloc (strlen (container) + strlen (namelist[i]->d_name) + 2);
     sprintf (fullpath, "%s/%s", container, namelist[i]->d_name);
-
-    log_verbose ("%s\n", fullpath);
+    //log_verbose ("%s\n", fullpath);
 
     if (stat (fullpath, &st) < 0)
     {

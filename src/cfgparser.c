@@ -285,8 +285,11 @@ parse_config_file (struct ushare_t *ut)
     snprintf (filename, PATH_MAX, "%s", ut->cfg_file);
 
   conffile = fopen (filename, "r");
-  if (!conffile)
+  if (!conffile) {
+    /* fprintf here, because syslog not yet ready */
+    fprintf (stderr, _("Warning: can't parse file \"%s\".\n"), filename);
     return -1;
+  }
 
   while ((read = getline (&line, &size, conffile)) != -1)
   {
@@ -339,7 +342,7 @@ display_usage (void)
 }
 
 int
-parse_command_line (struct ushare_t *ut, int argc, char **argv)
+parse_command_line (struct ushare_t *ut)
 {
   int c, index;
   char short_options[] = "VhvDowtxdn:i:p:q:c:f:";
@@ -367,7 +370,7 @@ parse_command_line (struct ushare_t *ut, int argc, char **argv)
   /* command line argument processing */
   while (true)
   {
-    c = getopt_long (argc, argv, short_options, long_options, &index);
+    c = getopt_long (ut->argc, ut->argv, short_options, long_options, &index);
 
     if (c == EOF)
       break;

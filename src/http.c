@@ -257,7 +257,7 @@ http_read (UpnpWebFileHandle fh, char *buf, size_t buflen)
   struct web_file_t *file = (struct web_file_t *) fh;
   ssize_t len = -1;
 
-  log_verbose ("http_read\n");
+  log_verbose ("http_read file=%p entry=%p\n", file, file->detail.local.entry);
 
   if (!file)
     return -1;
@@ -265,11 +265,11 @@ http_read (UpnpWebFileHandle fh, char *buf, size_t buflen)
   switch (file->type)
   {
   case FILE_LOCAL:
-    log_verbose ("Read local file.\n");
+    log_verbose ("Reading local file.\n");
     len = read (file->detail.local.fd, buf, buflen);
     break;
   case FILE_MEMORY:
-    log_verbose ("Read file from memory.\n");
+    log_verbose ("Reading file from memory.\n");
     len = (size_t) MIN (buflen, file->detail.memory.len - file->pos);
     memcpy (buf, file->detail.memory.contents + file->pos, (size_t) len);
     break;
@@ -282,7 +282,6 @@ http_read (UpnpWebFileHandle fh, char *buf, size_t buflen)
     file->pos += len;
 
   log_verbose ("Read %zd bytes.\n", len);
-
   return len;
 }
 
@@ -302,7 +301,7 @@ http_seek (UpnpWebFileHandle fh, off_t offset, int origin)
   struct web_file_t *file = (struct web_file_t *) fh;
   off_t newpos = -1;
 
-  log_verbose ("http_seek\n");
+  log_verbose ("http_seek file=%p origin=%d bytes\n", file, origin);
 
   if (!file)
     return -1;
@@ -376,7 +375,7 @@ http_close (UpnpWebFileHandle fh)
 {
   struct web_file_t *file = (struct web_file_t *) fh;
 
-  log_verbose ("http_close\n");
+  log_verbose ("http_close file=%p\n", file);
 
   if (!file)
     return -1;
