@@ -25,6 +25,18 @@
 #include <upnp/upnp.h>
 #include <upnp/upnptools.h>
 
-struct UpnpVirtualDirCallbacks virtual_dir_callbacks;
+int http_get_info (const char *filename, struct File_Info *info);
+
+UpnpWebFileHandle http_open (const char *filename, enum UpnpOpenFileMode mode);
+
+int http_read (UpnpWebFileHandle fh, char *buf, size_t buflen);
+
+int http_seek (UpnpWebFileHandle fh, off_t offset, int origin);
+
+int http_write (UpnpWebFileHandle fh __attribute__((unused)),
+	char *buf __attribute__((unused)),
+	size_t buflen __attribute__((unused)));
+
+int http_close (UpnpWebFileHandle fh);
 
 #endif /* _HTTP_H_ */

@@ -192,7 +192,7 @@ handle_action_request (struct Upnp_Action_Request *request)
   if (strcmp (request->DevUDN + 5, ut->udn))
     return;
 
-  ip = request->CtrlPtIPAddr.s_addr;
+  ip = (*(struct sockaddr_in *)&request->CtrlPtIPAddr).sin_addr.s_addr;
   ip = ntohl (ip);
   sprintf (val, "%d.%d.%d.%d",
            (ip >> 24) & 0xFF, (ip >> 16) & 0xFF, (ip >> 8) & 0xFF, ip & 0xFF);
@@ -352,13 +352,23 @@ init_upnp (struct ushare_t *ut)
 
   UpnpEnableWebserver (TRUE);
 
-  res = UpnpSetVirtualDirCallbacks (&virtual_dir_callbacks);
-  if (res != UPNP_E_SUCCESS)
-  {
-    log_error (_("Cannot set virtual directory callbacks\n"));
-    free (description);
-    return -1;
-  }
+#define upnp_set_callback(cb, func) \
+  do {                                                            \
+    res = UpnpVirtualDir_set_##cb##Callback(func);                \
+    if (res != UPNP_E_SUCCESS)                                    \
+    {                                                             \
+      log_error (_("Cannot set virtual directory callbacks\n"));  \
+      free (description);                                         \
+      return -1;                                                  \
+    }                                                             \
+  } while(0)
+
+  upnp_set_callback(GetInfo, http_get_info);
+  upnp_set_callback(Open,    http_open);
+  upnp_set_callback(Read,    http_read);
+  upnp_set_callback(Seek,    http_seek);
+  upnp_set_callback(Write,   http_write);
+  upnp_set_callback(Close,   http_close);
 
   res = UpnpAddVirtualDir (VIRTUAL_DIR);
   if (res != UPNP_E_SUCCESS)
