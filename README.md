@@ -49,7 +49,7 @@ Web site and file area for uShare is hosted on GeeXboX server :
 
    http://ushare.geexbox.org/
 
-The latest version of uShare should always be available on this site.
+The latest release of uShare should always be available on this site.
 
 Requirements
 ============
@@ -174,13 +174,6 @@ Supported File Formats List
 
 If you want uShare to support more file formats, simply add its properties
 in the src/mime.c table. Do not forget to send a patch to update uShare.
-
-Feedback
-========
-
-Please send bug reports, suggestions, ideas, comments or patches to :
-
-   ushare@geexbox.org
 
 Known bugs and limitations
 ==========================
