@@ -56,11 +56,12 @@
 #include <upnp/upnp.h>
 #include <upnp/upnptools.h>
 
+#include "config.h"
+
 #if (defined(HAVE_SETLOCALE) && defined(CONFIG_NLS))
 # include <locale.h>
 #endif
 
-#include "config.h"
 #include "ushare.h"
 #include "services.h"
 #include "http.h"
