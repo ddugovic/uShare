@@ -748,7 +748,7 @@ reload_config (int s __attribute__ ((unused)))
   }
 }
 
-inline void
+void
 display_headers (void)
 {
   printf (_("%s (version %s), a lightweight UPnP A/V and DLNA Media Server.\n"),
