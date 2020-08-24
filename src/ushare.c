@@ -177,7 +177,7 @@ ushare_signal_exit (void)
 }
 
 static void
-handle_action_request (struct Upnp_Action_Request *request)
+handle_action_request (UpnpActionRequest *request)
 {
   struct service_t *service;
   struct service_action_t *action;
@@ -187,25 +187,25 @@ handle_action_request (struct Upnp_Action_Request *request)
   if (!request || !ut)
     return;
 
-  if (request->ErrCode != UPNP_E_SUCCESS)
+  if (UpnpActionRequest_get_ErrCode(request) != UPNP_E_SUCCESS)
     return;
 
-  if (strcmp (request->DevUDN + 5, ut->udn))
+  if (strcmp (UpnpActionRequest_get_DevUDN_cstr(request) + 5, ut->udn))
     return;
 
-  ip = (*(struct sockaddr_in *)&request->CtrlPtIPAddr).sin_addr.s_addr;
+  ip = (*(struct sockaddr_in *)UpnpActionRequest_get_CtrlPtIPAddr(request)).sin_addr.s_addr;
   ip = ntohl (ip);
   sprintf (val, "%d.%d.%d.%d",
            (ip >> 24) & 0xFF, (ip >> 16) & 0xFF, (ip >> 8) & 0xFF, ip & 0xFF);
 
   if (ut->verbose)
   {
-    DOMString str = ixmlPrintDocument (request->ActionRequest);
+    DOMString str = ixmlPrintDocument (UpnpActionRequest_get_ActionRequest(request));
     log_verbose ("***************************************************\n");
     log_verbose ("**             New Action Request                **\n");
     log_verbose ("***************************************************\n");
-    log_verbose ("ServiceID: %s\n", request->ServiceID);
-    log_verbose ("ActionName: %s\n", request->ActionName);
+    log_verbose ("ServiceID: %s\n", UpnpActionRequest_get_ServiceID_cstr(request));
+    log_verbose ("ActionName: %s\n", UpnpActionRequest_get_ActionName_cstr(request));
     log_verbose ("CtrlPtIP: %s\n", val);
     log_verbose ("Action Request:\n%s\n", str);
     ixmlFreeDOMString (str);
@@ -220,11 +220,11 @@ handle_action_request (struct Upnp_Action_Request *request)
       event.service = service;
 
       if (action->function (&event) && event.status)
-        request->ErrCode = UPNP_E_SUCCESS;
+        UpnpActionRequest_set_ErrCode(request, UPNP_E_SUCCESS);
 
       if (ut->verbose)
       {
-        DOMString str = ixmlPrintDocument (request->ActionResult);
+        DOMString str = ixmlPrintDocument (UpnpActionRequest_get_ActionResult(request));
         log_verbose ("Action Result:\n%s", str);
         log_verbose ("***************************************************\n");
         log_verbose ("\n");
@@ -235,22 +235,22 @@ handle_action_request (struct Upnp_Action_Request *request)
     }
 
   if (service) /* Invalid Action name */
-    strcpy (request->ErrStr, "Unknown Service Action");
+    UpnpActionRequest_strcpy_ErrStr(request, "Unknown Service Action");
   else /* Invalid Service name */
-    strcpy (request->ErrStr, "Unknown Service ID");
+    UpnpActionRequest_strcpy_ErrStr(request, "Unknown Service ID");
 
-  request->ActionResult = NULL;
-  request->ErrCode = UPNP_SOAP_E_INVALID_ACTION;
+  UpnpActionRequest_set_ActionResult(request, NULL);
+  UpnpActionRequest_set_ErrCode(request, UPNP_SOAP_E_INVALID_ACTION);
 }
 
 static int
-device_callback_event_handler (Upnp_EventType type, void *event,
+device_callback_event_handler (Upnp_EventType type, const void *event,
                                void *cookie __attribute__((unused)))
 {
   switch (type)
     {
     case UPNP_CONTROL_ACTION_REQUEST:
-      handle_action_request ((struct Upnp_Action_Request *) event);
+      handle_action_request ((UpnpActionRequest *) event);
       break;
     case UPNP_CONTROL_ACTION_COMPLETE:
     case UPNP_EVENT_SUBSCRIPTION_REQUEST:
@@ -323,7 +323,7 @@ init_upnp (struct ushare_t *ut)
 #endif /* HAVE_DLNA */
 
   log_info (_("Initializing UPnP subsystem ...\n"));
-  res = UpnpInit (ut->ip, ut->port);
+  res = UpnpInit2 (ut->interface, ut->port);
   if (res != UPNP_E_SUCCESS)
   {
     log_error (_("Cannot initialize UPnP subsystem\n"));
@@ -351,7 +351,7 @@ init_upnp (struct ushare_t *ut)
   log_info (_("UPnP MediaServer listening on %s:%d\n"),
             UpnpGetServerIpAddress (), ut->port);
 
-  UpnpEnableWebserver (TRUE);
+  UpnpEnableWebserver (1);
 
 #define upnp_set_callback(cb, func) \
   do {                                                            \
@@ -371,7 +371,7 @@ init_upnp (struct ushare_t *ut)
   upnp_set_callback(Write,   http_write);
   upnp_set_callback(Close,   http_close);
 
-  res = UpnpAddVirtualDir (VIRTUAL_DIR);
+  res = UpnpAddVirtualDir (VIRTUAL_DIR, NULL, NULL);
   if (res != UPNP_E_SUCCESS)
   {
     log_error (_("Cannot add virtual directory for web server\n"));

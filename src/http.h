@@ -25,18 +25,30 @@
 #include <upnp/upnp.h>
 #include <upnp/upnptools.h>
 
-int http_get_info (const char *filename, struct File_Info *info);
+int http_get_info (const char *filename, UpnpFileInfo *info,
+	const void* cookie __attribute__((unused)),
+	const void** requestCookie __attribute__((unused)));
 
-UpnpWebFileHandle http_open (const char *filename, enum UpnpOpenFileMode mode);
+UpnpWebFileHandle http_open (const char *filename, enum UpnpOpenFileMode mode,
+	const void* cookie __attribute__((unused)),
+	const void* requestCookie __attribute__((unused)));
 
-int http_read (UpnpWebFileHandle fh, char *buf, size_t buflen);
+int http_read (UpnpWebFileHandle fh, char *buf, size_t buflen,
+	const void* cookie __attribute__((unused)),
+	const void* requestCookie __attribute__((unused)));
 
-int http_seek (UpnpWebFileHandle fh, off_t offset, int origin);
+int http_seek (UpnpWebFileHandle fh, off_t offset, int origin,
+	const void* cookie __attribute__((unused)),
+	const void* requestCookie __attribute__((unused)));
 
 int http_write (UpnpWebFileHandle fh __attribute__((unused)),
 	char *buf __attribute__((unused)),
-	size_t buflen __attribute__((unused)));
+	size_t buflen __attribute__((unused)),
+	const void* cookie __attribute__((unused)),
+	const void* requestCookie __attribute__((unused)));
 
-int http_close (UpnpWebFileHandle fh);
+int http_close (UpnpWebFileHandle fh,
+ 	const void* cookie __attribute__((unused)),
+	const void* requestCookie __attribute__((unused)));
 
 #endif /* _HTTP_H_ */

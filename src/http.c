@@ -68,17 +68,19 @@ struct web_file_t {
 
 
 static inline void
-set_info_file (struct File_Info *info, const size_t length,
+set_info_file (UpnpFileInfo *info, const size_t length,
                const char *content_type)
 {
-  info->file_length = length;
-  info->last_modified = 0;
-  info->is_directory = 0;
-  info->is_readable = 1;
-  info->content_type = ixmlCloneDOMString (content_type);
+  UpnpFileInfo_set_FileLength(info, length);
+  UpnpFileInfo_set_LastModified(info, 0);
+  UpnpFileInfo_set_IsDirectory(info, 0);
+  UpnpFileInfo_set_IsReadable(info, 1);
+  UpnpFileInfo_set_ContentType(info, ixmlCloneDOMString (content_type));
 }
 
-int http_get_info (const char *filename, struct File_Info *info)
+int http_get_info (const char *filename, UpnpFileInfo *info,
+                   const void* cookie __attribute__((unused)),
+                   const void** requestCookie __attribute__((unused)))
 {
   extern struct ushare_t *ut;
   struct upnp_entry_t *entry = NULL;
@@ -143,15 +145,15 @@ int http_get_info (const char *filename, struct File_Info *info)
   {
     if (errno != EACCES)
       return -1;
-    info->is_readable = 0;
+    UpnpFileInfo_set_IsReadable(info, 0);
   }
   else
-    info->is_readable = 1;
+    UpnpFileInfo_set_IsReadable(info, 1);
 
   /* file exist and can be read */
-  info->file_length = st.st_size;
-  info->last_modified = st.st_mtime;
-  info->is_directory = S_ISDIR (st.st_mode);
+  UpnpFileInfo_set_FileLength(info, st.st_size);
+  UpnpFileInfo_set_LastModified(info, st.st_mtime);
+  UpnpFileInfo_set_IsDirectory(info, S_ISDIR (st.st_mode));
 
   protocol = 
 #ifdef HAVE_DLNA
@@ -172,11 +174,11 @@ int http_get_info (const char *filename, struct File_Info *info)
 
   if (content_type)
   {
-    info->content_type = ixmlCloneDOMString (content_type);
+    UpnpFileInfo_set_ContentType(info, ixmlCloneDOMString (content_type));
     free (content_type);
   }
   else
-    info->content_type = ixmlCloneDOMString ("");
+    UpnpFileInfo_set_ContentType(info, ixmlCloneDOMString (""));
 
   return 0;
 }
@@ -197,7 +199,9 @@ get_file_memory (const char *fullpath, const char *description,
   return ((UpnpWebFileHandle) file);
 }
 
-UpnpWebFileHandle http_open (const char *filename, enum UpnpOpenFileMode mode)
+UpnpWebFileHandle http_open (const char *filename, enum UpnpOpenFileMode mode,
+                             const void* cookie __attribute__((unused)),
+                             const void* requestCookie __attribute__((unused)))
 {
   extern struct ushare_t *ut;
   struct upnp_entry_t *entry = NULL;
@@ -250,7 +254,9 @@ UpnpWebFileHandle http_open (const char *filename, enum UpnpOpenFileMode mode)
   return ((UpnpWebFileHandle) file);
 }
 
-int http_read (UpnpWebFileHandle fh, char *buf, size_t buflen)
+int http_read (UpnpWebFileHandle fh, char *buf, size_t buflen,
+               const void* cookie __attribute__((unused)),
+               const void* requestCookie __attribute__((unused)))
 {
   struct web_file_t *file = (struct web_file_t *) fh;
   ssize_t len = -1;
@@ -285,14 +291,18 @@ int http_read (UpnpWebFileHandle fh, char *buf, size_t buflen)
 
 int http_write (UpnpWebFileHandle fh __attribute__((unused)),
             char *buf __attribute__((unused)),
-            size_t buflen __attribute__((unused)))
+            size_t buflen __attribute__((unused)),
+            const void* cookie __attribute__((unused)),
+            const void* requestCookie __attribute__((unused)))
 {
   log_verbose ("http write\n");
 
   return 0;
 }
 
-int http_seek (UpnpWebFileHandle fh, off_t offset, int origin)
+int http_seek (UpnpWebFileHandle fh, off_t offset, int origin,
+               const void* cookie __attribute__((unused)),
+               const void* requestCookie __attribute__((unused)))
 {
   struct web_file_t *file = (struct web_file_t *) fh;
   off_t newpos = -1;
@@ -366,7 +376,9 @@ int http_seek (UpnpWebFileHandle fh, off_t offset, int origin)
   return 0;
 }
 
-int http_close (UpnpWebFileHandle fh)
+int http_close (UpnpWebFileHandle fh,
+                const void* cookie __attribute__((unused)),
+                const void* requestCookie __attribute__((unused)))
 {
   struct web_file_t *file = (struct web_file_t *) fh;
 
