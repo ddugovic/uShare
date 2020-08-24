@@ -98,14 +98,17 @@ You can pass the CFLAGS you want to configure including -DDEBUG in order
 to activate support for debug messages in uShare.
 
 Example:
-CFLAGS="-Os" ./configure --prefix=/usr
-make
+
+        CFLAGS="-Os" ./configure --prefix=/usr
+        make
 
 You can enable DLNA support by doing:
-./configure --enable-dlna
+
+        ./configure --enable-dlna
 
 If you want to install uShare on your system, run:
-make install
+
+        make install
 
 This will copy the executable and manual page into their appropriate
 directories (/usr/bin and /usr/man/man1 in this example).
@@ -118,23 +121,23 @@ Usage
 uShare runs from the console only. It supports the usual --help option
 which displays usage and option information.
 
-Usage: ushare [-n name] [-i interface] [-c directory] [[-c directory] ...]
-Options:
- -n, --name=NAME        Set UPnP Friendly Name (default is 'uShare')
- -i, --interface=IFACE  Use IFACE Network Interface (default is 'eth0')
- -f, --cfg=FILE         Config file to be used
- -p, --port=PORT        Forces the HTTP server to run on PORT
- -q, --telnet-port=PORT Forces the TELNET server to run on PORT
- -c, --content=DIR      Share the content of DIR directory.
- -w, --no-web           Disable the control web page (enabled by default)
- -t, --no-telnet        Disable the TELNET control (enabled by default)
- -o, --override-iconv-err       If iconv fails parsing name, still add to media contents (hoping the renderer can handle it)
- -v, --verbose          Set verbose display
- -x, --xbox             Use XboX 360 compliant profile
- -d, --dlna             Use DLNA compliant profile (PlayStation3 needs this)
- -D, --daemon           Run as a daemon.
- -V, --version          Display the version of uShare and exit
- -h, --help             Display this help
+        Usage: ushare [-n name] [-i interface] [-c directory] [[-c directory] ...]
+        Options:
+         -n, --name=NAME        Set UPnP Friendly Name (default is 'uShare')
+         -i, --interface=IFACE  Use IFACE Network Interface (default is 'eth0')
+         -f, --cfg=FILE         Config file to be used
+         -p, --port=PORT        Forces the HTTP server to run on PORT
+         -q, --telnet-port=PORT Forces the TELNET server to run on PORT
+         -c, --content=DIR      Share the content of DIR directory.
+         -w, --no-web           Disable the control web page (enabled by default)
+         -t, --no-telnet        Disable the TELNET control (enabled by default)
+         -o, --override-iconv-err       If iconv fails parsing name, still add to media contents (hoping the renderer can handle it)
+         -v, --verbose          Set verbose display
+         -x, --xbox             Use XboX 360 compliant profile
+         -d, --dlna             Use DLNA compliant profile (PlayStation3 needs this)
+         -D, --daemon           Run as a daemon.
+         -V, --version          Display the version of uShare and exit
+         -h, --help             Display this help
 
 uShare gets its configuration from the /etc/ushare.conf file.
 You can force configuration options through command line.
@@ -143,8 +146,8 @@ uShare expects one or several directory argument (-c argument),
 specifying where multimedia files are stored. You should probably also use
 the -i option to specify which interface uShare should listen on.
 
-   ushare -c /shares
-   ushare -c /shares1 --content=/shares2
+        ushare -c /shares
+        ushare -c /shares1 --content=/shares2
 
 You can also perform remote control of uShare UPnP Media Server through its
 web interface. This let you define new content locations at runtime or
@@ -155,7 +158,7 @@ Just go to :
 
 See the manual page for more details :
 
-   man ushare
+        man ushare
 
 Supported File Formats List
 ===========================
@@ -201,6 +204,4 @@ Note that this list of references is not complete.
 Trademarks
 ==========
 
-UPnP(TM) is a trademark of the UPnP(TM) Implementers Corporation.
-
--
+ * UPnP(TM) is a trademark of the UPnP(TM) Implementers Corporation.
