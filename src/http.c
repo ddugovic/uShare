@@ -305,17 +305,17 @@ int http_seek (UpnpWebFileHandle fh, off_t offset, int origin)
   switch (origin)
   {
   case SEEK_SET:
-    log_verbose ("Attempting to seek to %lld (was at %lld) in %s\n",
+    log_verbose ("Attempting to seek to %zu (was at %zu) in %s\n",
                 offset, file->pos, file->fullpath);
     newpos = offset;
     break;
   case SEEK_CUR:
-    log_verbose ("Attempting to seek by %lld from %lld in %s\n",
+    log_verbose ("Attempting to seek by %zu from %zu in %s\n",
                 offset, file->pos, file->fullpath);
     newpos = file->pos + offset;
     break;
   case SEEK_END:
-    log_verbose ("Attempting to seek by %lld from end (was at %lld) in %s\n",
+    log_verbose ("Attempting to seek by %zu from end (was at %zu) in %s\n",
                 offset, file->pos, file->fullpath);
 
     if (file->type == FILE_LOCAL)
