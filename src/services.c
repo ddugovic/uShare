@@ -113,6 +113,7 @@ upnp_add_response (struct action_event_t *event, char *key, const char *value)
   res = UpnpAddToActionResponse (&actionResult,
                                  UpnpActionRequest_get_ActionName_cstr(event->request),
                                  event->service->type, key, val);
+  UpnpActionRequest_set_ActionResult(event->request, actionResult);
 
   if (res != UPNP_E_SUCCESS)
     {
