@@ -761,7 +761,7 @@ ctrl_telnet_tokenize (char *raw, int *argc, char ***argv)
           has_backslash = 2; /* FULHACK */
           break;
         }
-        /* Else: fall through */
+        /* fall through */
       case ' ':
       case '"':
         if (has_backslash)
