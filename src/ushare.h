@@ -130,6 +130,6 @@ struct action_event_t {
   struct service_t *service;
 };
 
-inline void display_headers (void);
+void display_headers (void);
 
 #endif /* _USHARE_H_ */
