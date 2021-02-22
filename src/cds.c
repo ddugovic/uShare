@@ -591,7 +591,7 @@ matches_search (char *search_criteria, struct upnp_entry_t *entry)
                 strlen (SEARCH_CLASS_MATCH_KEYWORD)))
   {
     strncpy (keyword, search_criteria
-             + strlen (SEARCH_CLASS_MATCH_KEYWORD), sizeof (keyword));
+             + strlen (SEARCH_CLASS_MATCH_KEYWORD), sizeof (keyword) - 1);
     quote_closed = strchr (keyword, '"');
 
     if (quote_closed)
@@ -602,7 +602,7 @@ matches_search (char *search_criteria, struct upnp_entry_t *entry)
   {
     derived_from = true;
     strncpy (keyword, search_criteria
-             + strlen (SEARCH_CLASS_DERIVED_KEYWORD), sizeof (keyword));
+             + strlen (SEARCH_CLASS_DERIVED_KEYWORD), sizeof (keyword) - 1);
     quote_closed = strchr (keyword, '"');
 
     if (quote_closed)
@@ -613,7 +613,7 @@ matches_search (char *search_criteria, struct upnp_entry_t *entry)
   {
     protocol_contains = true;
     strncpy (keyword, search_criteria
-             + strlen (SEARCH_PROTOCOL_CONTAINS_KEYWORD), sizeof (keyword));
+             + strlen (SEARCH_PROTOCOL_CONTAINS_KEYWORD), sizeof (keyword) - 1);
     quote_closed = strchr (keyword, '"');
 
     if (quote_closed)
