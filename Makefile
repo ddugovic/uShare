@@ -14,9 +14,12 @@ EXTRADIST = AUTHORS \
 	    THANKS \
 	    TODO \
 
-SUBDIRS = po \
-	  scripts \
+SUBDIRS = scripts \
 	  src \
+
+ifeq ($(NLS),yes)
+SUBDIRS += po
+endif
 
 all:
 	for subdir in $(SUBDIRS); do \

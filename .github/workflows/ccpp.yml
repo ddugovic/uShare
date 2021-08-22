@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: install libupnp-1.14
-      run: wget https://github.com/pupnp/pupnp/releases/download/release-1.14.0/libupnp-1.14.0.tar.bz2 && tar xjvf libupnp-1.14.0.tar.bz2 && cd libupnp-1.14.0 && ./configure && sudo make install && cd ..
+      run: wget https://github.com/pupnp/pupnp/releases/download/release-1.14.0/libupnp-1.14.0.tar.bz2 && tar xjvf libupnp-1.14.0.tar.bz2 && cd libupnp-1.14.0 && ./configure --disable-nls && sudo make install && cd ..
     - name: configure
       run: ./configure
     - name: make

@@ -414,6 +414,8 @@ for opt do
   ;;
   --with-libdlna-dir=*) libdlnadir="$optval";
   ;;
+  --enable-nls) nls="yes"
+  ;;
   --disable-nls) nls="no"
   ;;
   --enable-dlna) dlna="yes"
@@ -723,6 +725,7 @@ append_config "LDFLAGS=$LDFLAGS"
 append_config "INSTALL=$INSTALL"
 
 append_config "DEBUG=$debug"
+append_config "NLS=$nls"
 
 
 echolog "Creating $CONFIG_H ..."
