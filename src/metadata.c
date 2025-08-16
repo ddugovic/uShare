@@ -350,6 +350,8 @@ upnp_entry_free (struct ushare_t *ut, struct upnp_entry_t *entry)
  	  free (entry_found->title);
  	if (entry_found->url)
  	  free (entry_found->url);
+	if (entry_found->childs)
+	  free (entry_found->childs);
 
 	free (entry_found);
  	i++;
