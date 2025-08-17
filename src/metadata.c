@@ -344,17 +344,17 @@ upnp_entry_free (struct ushare_t *ut, struct upnp_entry_t *entry)
       entry_found = lk->entry_ptr;
       if (entry_found)
       {
- 	if (entry_found->fullpath)
- 	  free (entry_found->fullpath);
- 	if (entry_found->title)
- 	  free (entry_found->title);
- 	if (entry_found->url)
- 	  free (entry_found->url);
-	if (entry_found->childs)
-	  free (entry_found->childs);
+        if (entry_found->fullpath)
+          free (entry_found->fullpath);
+        if (entry_found->title)
+          free (entry_found->title);
+        if (entry_found->url)
+          free (entry_found->url);
+        if (entry_found->childs)
+          free (entry_found->childs);
 
-	free (entry_found);
- 	i++;
+         free (entry_found);
+         i++;
       }
 
       free (lk); /* delete the lookup */
@@ -364,6 +364,17 @@ upnp_entry_free (struct ushare_t *ut, struct upnp_entry_t *entry)
     rbcloselist (rblist);
     rbdestroy (ut->rb);
     ut->rb = NULL;
+
+    /* root entry is not in the rbtree and needs to be freed separately */
+    if (ut->root_entry->fullpath)
+      free (ut->root_entry->fullpath);
+    if (ut->root_entry->title)
+      free (ut->root_entry->title);
+    if (ut->root_entry->url)
+      free (ut->root_entry->url);
+    if (ut->root_entry->childs)
+      free (ut->root_entry->childs);
+    ut->root_entry = NULL;
 
     log_verbose ("Freed [%d] entries\n", i);
   }
